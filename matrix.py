@@ -1,5 +1,5 @@
 class Matrix:
-    def __init__(self, list_of_rows):
+    def __init__(self, list_of_rows, name=None):
         # example m=Matrix([[1,2,3],
         #                   [2,3,4],
         #                   [5,5,6]])
@@ -10,6 +10,7 @@ class Matrix:
         self.det = None
         self.row_range = range(self.num_of_rows)
         self.col_range = range(self.num_of_cols)
+        self.name = name
 
     @classmethod
     def validation(cls, rows):
@@ -32,8 +33,12 @@ class Matrix:
                     raise ValueError("All values must be float")
         return num_of_cols
 
+
     def __str__(self):
-        result = "Matrix({1}x{0}):\n".format(self.num_of_cols, self.num_of_rows)
+        if(self.name):
+            result = "{2} Matrix({1}x{0}):\n".format(self.num_of_cols, self.num_of_rows, self.name)
+        else:
+            result = "Matrix({1}x{0}):\n".format(self.num_of_cols, self.num_of_rows)
         for row in self.rows:
             result += str(list(map(str, row))) + "\n"
         return result
@@ -97,7 +102,9 @@ class SquareMatrix(Matrix):
         i = 0
         result = 0
         for j in self.col_range:
-            result += sign*self.rows[i][j]*self.minor(i, j).deteminante()
+            factor = self.rows[i][j]
+            if factor != 0:
+                result += sign*factor*self.minor(i, j).deteminante()
             sign *= -1
         self.det = result
         return self.det
@@ -119,16 +126,13 @@ class SquareMatrix(Matrix):
             result.append(row)
         return SquareMatrix(result)
 
-
     def gauss_method(self,b):
-        try:
-            return self._gauss_methodA(b)
-        except ValueError:
-            return self._gauss_methodB(b)
-
+        return self._gauss_methodA(b)
 
     def _gauss_methodA(self, b):
-        return self.inverse()*b
+        x = b*self.inverse()
+        x.name = "x"
+        return x
 
     def _gauss_methodB(self, b):
         L, U = self.LU()
@@ -141,7 +145,7 @@ class SquareMatrix(Matrix):
             raise ValueError("Matrix must be invertible")
 
     def _inverseA(self):
-        unit_matrix = ConstDiagonalMatrix(self.num_of_rows, 1)
+        unit_matrix = ConstDiagonalMatrix(self.num_of_rows, 1, "A inverse")
         temp_matrix = SquareMatrix((self.list_of_rows.copy()))
         for i in self.row_range:
             new_row_index, pivot_value = temp_matrix.pivot(i)
@@ -173,8 +177,11 @@ class SquareMatrix(Matrix):
             if value > max_value:
                 max_value = value
                 max_row = j
+        if max_value == 0:
+            raise ValueError("can't find pivot")  #אם בכל התור יש אפסים
         return max_row, max_value
 
+# דרך נוספת לעשות מטריצה הופכית
     def _inverseB(self):
         return self.adjoint() / self.deteminante()
     def adjoint(self):
@@ -185,46 +192,28 @@ class SquareMatrix(Matrix):
         return SquareMatrix(result)
 
     def LU(self):
-        self = self.rearrange_rows()
-        return L , U
-
-    def rearrange_rows(self):
-        # TODO
-        result = [[0 for j in self.col_range] for i in self.row_range]
+        L_matrix= ConstDiagonalMatrix(self.num_of_rows, 1, "L")
+        U_matrix = SquareMatrix(self.list_of_rows.copy(), "U")
         for i in self.row_range:
-            if self.rows[i][i] == 0:
-                result.append(self.rows[i]-1)
-                row_mapping = {i}
-                row_mapping[i] = None
-            else:
-                result.append(self.rows[i])
+            pivot_value =U_matrix.rows[i][i]
+            assert (pivot_value) # המרצה אמרה לא להחליף שורות
+            for j in self.row_range:
+                if j <= i:
+                    continue
+                factor = -U_matrix.rows[j][i]/pivot_value
+                L_matrix.rows[j][i] -= factor
+                for k in self.col_range:
+                    if j <= i:
+                        continue
+                    U_matrix.rows[j][k] += factor * U_matrix.rows[i][k]
+        return L_matrix, U_matrix
 
-
-
-            i = 1
-            j = 1
-            m = self.num_of_rows
-            n = self.num_of_cols
-            while ((i <= m) and (j <= n)):
-                maxi = i
-                k = i + 1
-                for k in range(m) :
-                    if abs(self.rows[k, j]) > abs(self.rows[maxi, j]):
-                        maxi = k
-                if self[maxi, j] != 0:
-                    temp = self.rows[i][j]
-                    self.rows[i][j] = self.rows[maxi][j]
-                    self.rows[maxi][j] = temp
-        return SquareMatrix(result)
-
-    def L_U(self):
-        pass
 
 class ConstDiagonalMatrix(SquareMatrix):
-    def __init__(self, size, value):
+    def __init__(self, size, value, name = None):
         Range = range(size)
         result = [[0 if j != i else value for j in Range ] for i in Range]
-        SquareMatrix.__init__(self, result)
+        SquareMatrix.__init__(self, result, name)
 
 
 

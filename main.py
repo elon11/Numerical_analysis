@@ -1,8 +1,13 @@
 from matrix import Matrix,SquareMatrix,ConstDiagonalMatrix
 
+A = SquareMatrix([[1, 2, 1],
+                 [2, 6, 1],
+                 [1, 1, 4]], "A")
+b = Matrix([[2, 3, 5]], "b")
 
-a= SquareMatrix([[1, 0, 0], [0, 5, 0], [0, 0, 6]])
-#b= Matrix([[1], [3], [2]])
-#print(a.gauss_method(b))
-#c = ConstDiagonalMatrix(9, 3)
-print(a.inverse())
+if (A.num_of_rows < 4):
+    L, U = A.LU()
+    print(L)
+    print(U)
+else:
+    print(A.gauss_method(b))
