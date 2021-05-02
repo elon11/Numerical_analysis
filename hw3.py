@@ -1,5 +1,5 @@
 import math
-
+#from matrix import Matrix, SquareMatrix, ConstDiagonalMatrix
 
 
 def Print_Matrix (A):
@@ -44,52 +44,59 @@ def Dominant_diagonal_test (A):
 
 
 
+
+
+
 def yaakobi (A, B):
     #if !Dominant_diagonal_test (A):
      #   Dominant_diagonal_make(A):
 
     Xr = Yr = Zr = 0
-    XR1 = YR1 = ZR1 = 0
+    #XR1 = YR1 = ZR1 = 0
     num1 = Xr1 = A[0][0]
     num2 =Yr1 = A[1][1]
     num3 =Zr1 =  A[2][2]
     i = 1
     check = False
-    XR1 = (B[0][0] + Yr + Zr) / num1
+    #ניחוש התחלתי
+    Xr1 = (B[0][0] + Yr + Zr) / num1
     Yr1 = (B[1][0] + Xr + Zr) / num2
     Zr1 = (B[2][0] + Yr + Xr) / num3
     while check == False :
-        print (i,'.','XR+1 =' , XR1 ,',' , 'Yr+1 =' , Yr1 ,',','Zr+1 =' ,Zr1)
-        check = (abs(XR1 - Xr) < 0.00001) or (abs(Yr1 - Yr) < 0.00001) or (abs(Zr1 - Zr) < 0.00001)
-        Xr = XR1
+        print (i,'.','XR+1 =' , Xr1 ,',' , 'Yr+1 =' , Yr1 ,',','Zr+1 =' ,Zr1)
+        # תנאי עצירה
+        check = (abs(Xr1 - Xr) < 0.00001) or (abs(Yr1 - Yr) < 0.00001) or (abs(Zr1 - Zr) < 0.00001)
+        # קידום איברים
+        Xr = Xr1
         Yr = Yr1
         Zr = Zr1
         i+=1
 
-        # Calculation of XR1
+        # Calculation of Xr1
+
         if A[0][1]>0:
             if A[0][2] == 0:
-                XR1 = (B[0][0] - Yr ) / num1
+                Xr1 = (B[0][0] - Yr ) / num1
             elif A[0][2] < 0:
-                XR1 = (B[0][0] - Yr + Zr) / num1
+                Xr1 = (B[0][0] - Yr + Zr) / num1
             else:
-                XR1 = (B[0][0] - Yr - Zr) / num1
+                Xr1 = (B[0][0] - Yr - Zr) / num1
 
         elif A[0][1]<0:
             if A[0][2] == 0:
-                XR1 = (B[0][0] + Yr ) / num1
+                Xr1 = (B[0][0] + Yr ) / num1
             elif A[0][2] < 0:
-                XR1 = (B[0][0] + Yr + Zr) / num1
+                Xr1 = (B[0][0] + Yr + Zr) / num1
             else:
-                XR1 = (B[0][0] + Yr - Zr) / num1
+                Xr1 = (B[0][0] + Yr - Zr) / num1
 
         else:
             if A[0][2] == 0:
-                XR1 = (B[0][0]) / num1
+                Xr1 = (B[0][0]) / num1
             elif A[0][2] < 0:
-                XR1 = (B[0][0] + Zr) / num1
+                Xr1 = (B[0][0] + Zr) / num1
             else:
-                XR1 = (B[0][0] - Zr) / num1
+                Xr1 = (B[0][0] - Zr) / num1
 
         # Calculation of Yr1
         if A[1][0] > 0:
@@ -142,6 +149,7 @@ def yaakobi (A, B):
 
 def gaus_zaidel(A,B):
     #if !Dominant_diagonal_test(A):
+      #  D,U,L = find_D_U_L(A)
      #   Dominant_diagonal_make(A):
 
     Xr = Yr = Zr = 0
@@ -270,7 +278,7 @@ def find_result():
 
 
     #כאן מצאתי את המטריצות D L U  אפשר לעשות את השיטה שלהם אבל לא חייב
-
+def find_D_U_L(A):
     D = A
     for i in range(len(A)):
         for j in range(len(A)):
@@ -286,5 +294,6 @@ def find_result():
                 else:
                     U = A[i][j]
                     L = A[0][0]
+    return D, U, L
 
 find_result()
