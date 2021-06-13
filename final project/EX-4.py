@@ -10,7 +10,7 @@ def find_derivative(my_f):
     return f_prime
 
 def print_result(A):
-    B = [-1] * 10
+    B = [-1] * 20
     index = 0
     check = True
     for num in A:
@@ -153,7 +153,7 @@ def main():
     start_point = -1
     end_point = 1.5
     epsilon = 0.00001
-    my_f = (sympy.sin(2 * x * 3 + 5 * x * 2 - 6)) / (2 * math.e ** (-2 * x))
+    my_f = (sympy.sin(2 * x ** 3 + 5 * x ** 2 - 6)) / (2 * (math.e ** (-2 * x)))
 
     check = input("choose option: 1 to Newton_Raphson, 2 to secant_method ")
     if check == '1':
