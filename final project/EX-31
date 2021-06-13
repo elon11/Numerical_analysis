@@ -1,5 +1,5 @@
-
 import numpy as np
+from datetime import datetime
 def mulMatrix(A, B):
     """
     create a new result matrix and mul A B
@@ -81,6 +81,13 @@ def Neviile(table_x, table_y, pointValue):
                 Q[i - 1][j - 1])) / \
                           (table_x[i] - table_x[i - j])
     return Q[n-1][n-2]
+
+
+def final_result(actual_result,now):
+    current_time = now.strftime("%d%H%M")
+    return f"{str(actual_result)}00000{current_time}"
+
+
 """----------------------------main----------------------------------"""
 x = float(input('choose your methode\n'
                 'Linear-1\n'
@@ -116,7 +123,9 @@ elif x == 3:
     for i in range(n):
         table_x[i] = float(input('x'))
         table_y[i] = float(input('y'))
-    print('Interpolated value at %0.4f is %0.4f' % (xp, Lagrange(table_x, table_y, xp)))
+    now = datetime.now()
+    lagr_res = final_result(Lagrange(table_x, table_y, xp),now)
+    print('Interpolated value at %0.4f is %s' % (xp, lagr_res))
 else:
     n = int(input('Enter num of points: '))
     table_x = [0 for y in range(n)]
