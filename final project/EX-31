@@ -1,0 +1,128 @@
+
+import numpy as np
+def mulMatrix(A, B):
+    """
+    create a new result matrix and mul A B
+    :param A: matrix A
+    :param B: matrix B
+    :return: a*b
+    """
+    AB = []
+    for i in range(len(A)):
+        AB.append(0)
+    for i in range(len(A)):
+        for k in range(len(B)):
+            AB[i] += A[i][k] * B[k]
+    return AB
+
+
+def Linear(table, pointValue):
+    """
+    Interpolates a value using Linear methode
+    :param table: pooints
+    :param pointValue: value to interpolate
+    :return: the result
+    """
+    return table[0][1] + ((table[1][1] - table[0][1]) / (table[1][0] - table[0][0])) * (pointValue - table[0][0])
+
+
+def Polinom(table_x, table_y, pointValue):
+    """
+    Interpolates a value using Polinom methode
+    :param table_x: x points
+    :param table_y: y points
+    :param pointValue:value to interpolate
+    :return: the result
+    """
+    n = len(table_x)
+    for i in range(2,n):
+        for j in range(n):
+            table_x[i][j] = table_x[1][j] ** i
+    Minv = np.linalg.inv(table_x)
+    result= mulMatrix(Minv,table_y)
+    f1 = lambda x: result[0]-result[1]*x-result[2]*x**2
+    return f1(pointValue)
+
+
+def Lagrange(table_x, table_y, pointValue):
+    """
+    Interpolates a value using Lagrange methode
+    :param table_x: table with all x points
+    :param table_y: table with all y points
+    :param pointValue: Value to interpolate
+    :return:
+    """
+    yp = 0
+    for i in range(n):
+        p = 1
+        for j in range(n):
+            if i != j:
+                p = p * (pointValue - table_x[j]) / (table_x[i] - table_x[j])
+        yp = yp + p * table_y[i]
+    return yp
+
+
+def Neviile(table_x, table_y, pointValue):
+    """
+       Interpolates a value using Neville polynomial
+       Parameters:
+           table_x: Array containing x values
+           table_y: Array containing y values
+           pointValue: Value to interpolate
+       """
+    n=len(table_x)
+    Q = [[0 for x in range(n)] for y in range(n)]
+    for i in range(n):
+        Q[i][0] = table_y[i]
+    for i in range(n):
+        for j in range(i):
+            if(table_x[i] - table_x[i - j]) !=0:
+                Q[i][j] = ((pointValue - table_x[i - j]) * (Q[i][j - 1]) - (pointValue - table_x[i]) * (
+                Q[i - 1][j - 1])) / \
+                          (table_x[i] - table_x[i - j])
+    return Q[n-1][n-2]
+"""----------------------------main----------------------------------"""
+x = float(input('choose your methode\n'
+                'Linear-1\n'
+                'Polinom-2\n'
+                'Lagrange-3\n'
+                'Neviile-4\n'))
+xp = float(input('Enter interpolation point: '))
+if x == 1:
+    table = [[0, 0], [0, 0]]
+    print('Enter first point:')
+    for i in range(2):
+        table[0][i] = float(input())
+    print('Enter second point:')
+    for i in range(2):
+        table[1][i] = float(input())
+    print('Interpolated value at %0.4f is %0.4f' % (xp, Linear(table, xp)))
+elif x == 2:
+    n = int(input('Enter num of points'))
+    table_x = [[0 for x in range(n)] for y in range(n)]
+    table_y = [0 for y in range(n)]
+    for i in range(n):
+        table_x[0][i] = 1
+    print('Enter points')
+    for i in range(n):
+        table_x[1][i] = float(input())
+        table_y[i] = float(input())
+    print('Interpolated value at %0.4f is %0.4f' % (xp, Polinom(table_x, table_y, xp)))
+elif x == 3:
+    n = int(input('Enter num of points: '))
+    table_x = [0 for y in range(n)]
+    table_y = [0 for y in range(n)]
+    print('Enter points')
+    for i in range(n):
+        table_x[i] = float(input('x'))
+        table_y[i] = float(input('y'))
+    print('Interpolated value at %0.4f is %0.4f' % (xp, Lagrange(table_x, table_y, xp)))
+else:
+    n = int(input('Enter num of points: '))
+    table_x = [0 for y in range(n)]
+    table_y = [0 for y in range(n)]
+    print('Enter points')
+    for i in range(n):
+        table_x[i] = float(input('x'))
+        table_y[i] = float(input('y'))
+    print('Interpolated value at %0.4f is %0.4f' % (xp, Neviile(table_x, table_y, xp)))
