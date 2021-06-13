@@ -261,9 +261,20 @@ def temp2 (my_f,start_point,end_point,epsilon):
 
 def main():
     x = sp.symbols('x')
-    my_f = x ** 4 + x ** 3 - 3 * x ** 2
-    start_point = 2
-    end_point = 8
+   # my_f = (math.pow((2 * x * math.e), -x) + math.log(2, 2 * math.pow(x, 2))) * (
+              #  2 * (math.pow((x, 3))) + 2 * (math.pow((x, 2))) - 3 * x - 5)
+   # my_f = x ** 4 + x ** 3 - 3 * x ** 2
+
+    log = math.log
+    e = math.e
+    a = lambda x: 2 * x * (e ** (-x))
+    b = lambda x: log(e, 2 * (x ** 3))
+    c = lambda x: 2 * (x ** 3)
+    d = lambda x: 2 * (x ** 2)
+
+    my_f = lambda x: (a + b) * (c + d - (3 * x) - 5)
+    start_point = 0
+    end_point = 1.5
     jump = 0.1
     epsilon = 0.00001
     check = input("choose option: 1 to Bisection_Method, 2 to Newton_Raphson, 3 to secant_method ")
